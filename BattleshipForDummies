@@ -2,41 +2,43 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Battleship {
-    public static ArrayList<Integer> rows = new ArrayList<Integer>();
-    public static ArrayList<Integer> cols = new ArrayList<Integer>();
-    public static String fin = "Safe spaces are ";
+    private final static ArrayList<Integer> rows = new ArrayList<>();
+    private final static ArrayList<Integer> cols = new ArrayList<>();
+    private final static StringBuilder safeSpaces = new StringBuilder("Safe spaces are ");
+
     public static void main(String[] args) {
         System.out.println("Enter serial number then ports and batteries + indicators");
         Scanner scan = new Scanner(System.in);
         String serial = scan.next();
-            /* Scanner automatically uses the delimiter space. This means that I can input the
-            serial number space the number for the last space and receive them in separate lines
-            (11 and 15*/
+            /* Scanner automatically uses the delimiter space. This means that I can input the serial
+            number space the number for the last space and receive them in separate lines (11 and 14)*/
         int last = scan.nextInt();
         for (char current : serial.toCharArray()) { // Iterates through the serial number, processing a character at a time
-            try {
-                rows.add(Integer.parseInt(String.valueOf(current))); // Attempt to add the current char as a number to the rows
-            } catch (NumberFormatException exc) { // "If it isn't a number"
-                cols.add(Character.getNumericValue(current)); // Add the numeric value of the letter (a is 1, z is 26) to the columns
-            }
+            if (Character.isDigit(current))
+                rows.add(Character.getNumericValue(current)); // Attempt to add the current char as a number to the rows
+            else
+                cols.add(Character.getNumericValue(current) - 9); // Add the numeric value of the letter (a is 1, z is 26) to the columns
         }
         while (!rows.isEmpty() || !cols.isEmpty()) { // Until I run out of either letters or numbers
             calc(cols.remove(0), rows.remove(0));
         }
         calc(last / 10 - 1, last); // last / 10 - 1 is the first character, to be calculated into the column
-        System.out.println(fin);
+        System.out.println(safeSpaces.toString());
     }
 
-    public static void calc(int col, int row) {
+    private static void calc(int col, int row) {
         String alphabet = "abcdefghijklmnopqrstuvwxyz";
-        col %= 5;
-        row %= 5;
-        if (row == 0) // 0 isn't an option, they are supposed to be replaced with 5's
-            row += 5;
-        if (col == 0)
-            col += 5;
-        String column = alphabet.substring(col, col + 1); // Replaces numeric value of column (now properly modulo'd) with it's correct letter
-        if (fin.indexOf(column + row) == -1) // Checks if the position already exists in the list; only adds if unique safe space
-            fin += column + row + " ";
+        int modCol = canonicalize(col);
+        int modRow = canonicalize(row);
+        String space = alphabet.substring(modCol-1, modCol) + modRow; // Replaces numeric value of column (now properly modulo'd) with it's correct letter
+        if (safeSpaces.indexOf(space) == -1) // Checks if the position already exists in the list; only adds if unique safe space
+            safeSpaces.append(space).append(" ");
+    }
+
+    private static int canonicalize(int input) {
+        int newVal = input % 5;
+        if (newVal == 0)
+            newVal = 5;
+        return newVal;
     }
 }
