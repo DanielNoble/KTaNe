@@ -10,8 +10,6 @@ public class Battleship {
         Scanner scan = new Scanner(System.in);
         String serial = scan.next();
         int last = scan.nextInt();
-        int currentnum;
-        String currentChar;
         for (char current : serial.toCharArray()) {
             try {
                 rows.add(Integer.parseInt(String.valueOf(current)));
