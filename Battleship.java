@@ -6,7 +6,6 @@ public class Battleship {
     public static ArrayList<Integer> cols = new ArrayList<Integer>();
     public static String fin = "Safe spaces are ";
     public static void main(String[] args) {
-        System.out.println("Enter serial number then ports and batteries + indicators");
         Scanner scan = new Scanner(System.in);
         String serial = scan.next();
         int last = scan.nextInt();
